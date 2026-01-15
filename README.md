@@ -1,6 +1,6 @@
 # React Native Expo Starter with NativeWind
 
-A starter template for React Native Expo projects with TypeScript, Redux Toolkit, Expo Router, and NativeWind (Tailwind CSS).
+A starter template for React Native Expo projects with TypeScript, Redux Toolkit, Expo Router, NativeWind (Tailwind CSS), and Clerk Authentication.
 
 ## Features
 
@@ -8,7 +8,8 @@ A starter template for React Native Expo projects with TypeScript, Redux Toolkit
 - ✅ TypeScript
 - ✅ Redux Toolkit
 - ✅ NativeWind (Tailwind CSS for React Native)
-- ✅ Authentication flow
+- ✅ Clerk Authentication (Sign In, Sign Up, Email Verification)
+- ✅ Protected Routes
 - ✅ UI Components
 - ✅ Custom Hooks
 - ✅ Utilities
@@ -20,7 +21,13 @@ A starter template for React Native Expo projects with TypeScript, Redux Toolkit
 npm install
 ```
 
-2. Start the development server:
+2. Set up environment variables:
+Create a `.env` file in the root directory and add your Clerk publishable key:
+```
+EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+```
+
+3. Start the development server:
 ```bash
 npm start
 ```
@@ -42,11 +49,33 @@ This project uses **NativeWind** (Tailwind CSS for React Native). You can use Ta
 </View>
 ```
 
+## Authentication
+
+This project uses **Clerk** for authentication. The authentication flow includes:
+
+- **Sign Up**: Email/password registration with email verification
+- **Sign In**: Email/password authentication
+- **Protected Routes**: App routes are automatically protected and redirect to sign-in if not authenticated
+- **Auth Routes**: Auth routes redirect to home if already signed in
+
+### Authentication Flow
+
+1. Unauthenticated users are redirected to `/(auth)/sign-in`
+2. After signing up, users receive an email verification code
+3. After verification, users are automatically signed in and redirected to `/(app)`
+4. Authenticated users can access all app routes
+5. Sign out redirects back to the sign-in page
+
 ## Project Structure
 
 - `app/` - Expo Router screens
-  - `(auth)/` - Authentication screens
-  - `(app)/` - Main app screens
+  - `(auth)/` - Authentication screens (sign-in, sign-up)
+    - `_layout.tsx` - Auth layout with redirect logic
+  - `(app)/` - Main app screens (protected)
+    - `_layout.tsx` - App layout with route protection
+    - `index.tsx` - Home screen with auth state
+  - `components/` - App-specific components
+    - `SignOutButton.tsx` - Sign out button component
 - `components/` - Reusable components
   - `ui/` - UI components (Button, Card, Input)
   - `shared/` - Shared components (Loading, Error)
