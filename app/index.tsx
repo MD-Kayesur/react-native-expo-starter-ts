@@ -157,6 +157,7 @@ export default function LandingPage() {
                 />
               </View>
             </SignedIn>
+           
 
             {/* Footer */}
             <View style={[styles.footer, isWeb && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
@@ -165,6 +166,9 @@ export default function LandingPage() {
               </Text>
               <Text style={styles.footerSubtext}>
                 Ready to build amazing mobile apps
+              </Text>
+              <Text style={styles.footerSubtext}>
+               created by: MD_Kayesur
               </Text>
             </View>
           </View>
