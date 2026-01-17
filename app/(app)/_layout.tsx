@@ -1,4 +1,4 @@
-import { Stack, Redirect } from 'expo-router/stack'
+import { Stack, Redirect } from 'expo-router'
 import { useAuth } from '@clerk/clerk-expo'
 
 export default function Layout() {

@@ -40,9 +40,22 @@ export default function Page() {
     } catch (err: any) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
-      const errorMessage = err?.errors?.[0]?.message || err?.message || 'An error occurred during sign in'
+      let errorMessage = 'An error occurred during sign in'
+      
+      if (err?.errors?.[0]?.message) {
+        errorMessage = err.errors[0].message
+      } else if (err?.message) {
+        errorMessage = err.message
+      } else if (err?.status === 401 || err?.statusCode === 401) {
+        errorMessage = 'Invalid email or password. Please check your credentials.'
+      } else if (err?.status === 403 || err?.statusCode === 403) {
+        errorMessage = 'Access denied. Please check your Clerk configuration.'
+      } else if (err?.status === 0 || err?.code === 'NETWORK_ERROR') {
+        errorMessage = 'Network error. Please check your internet connection.'
+      }
+      
       setError(errorMessage)
-      console.error(JSON.stringify(err, null, 2))
+      console.error('Sign in error:', JSON.stringify(err, null, 2))
     } finally {
       setLoading(false)
     }
@@ -53,8 +66,11 @@ export default function Page() {
       <Text className="text-2xl font-bold mb-5">Sign in</Text>
       
       {error ? (
-        <View className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-          <Text className="text-red-600 text-sm">{error}</Text>
+        <View className="bg-red-100 border-2 border-red-500 rounded-lg p-4 mb-4 shadow-lg">
+          <Text className="text-red-800 font-bold text-base mb-2">⚠️ Error</Text>
+          <Text className="text-red-700 text-sm leading-5" numberOfLines={5}>
+            {error}
+          </Text>
         </View>
       ) : null}
       

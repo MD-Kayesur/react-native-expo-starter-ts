@@ -22,9 +22,7 @@
       },
       "package": "com.starter.app"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
+    "web": {},
     "scheme": "starter"
   }
 }

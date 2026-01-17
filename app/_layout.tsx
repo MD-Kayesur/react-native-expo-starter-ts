@@ -1,4 +1,4 @@
-import { Stack } from 'expo-router';
+import { Stack, Redirect } from 'expo-router';
 import { Provider } from 'react-redux';
 import { store } from '../store';
 import { useEffect } from 'react';
@@ -54,16 +54,27 @@ export default function RootLayout() {
     }
   }, []);
 
-  // If no publishable key, show error message but don't crash
+  // If no publishable key, show error screen
   if (!publishableKey) {
     return (
       <Provider store={store}>
         <Stack>
           <Stack.Screen 
+            name="(auth)/missing-key" 
+            options={{ 
+              headerShown: false,
+            }} 
+          />
+          <Stack.Screen 
             name="(auth)" 
             options={{ 
               headerShown: false,
-              contentStyle: { alignItems: 'center', justifyContent: 'center', padding: 20 }
+            }} 
+          />
+          <Stack.Screen 
+            name="(app)" 
+            options={{ 
+              headerShown: false,
             }} 
           />
         </Stack>
