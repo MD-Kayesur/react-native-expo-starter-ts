@@ -59,6 +59,7 @@ export default function RootLayout() {
     return (
       <Provider store={store}>
         <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen 
             name="(auth)/missing-key" 
             options={{ 
@@ -93,6 +94,7 @@ export default function RootLayout() {
     >
       <Provider store={store}>
         <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(app)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />

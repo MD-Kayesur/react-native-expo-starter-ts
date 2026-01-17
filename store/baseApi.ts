@@ -9,4 +9,4 @@ export const api = createApi({
   }),
 });
 
-export const { useGetDataQuery } = api;
+export const { } = api;
