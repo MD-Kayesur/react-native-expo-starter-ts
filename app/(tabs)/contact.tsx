@@ -16,17 +16,17 @@ export default function Contact() {
   const isDarkMode = colorScheme === 'dark';
 
   const handleEmailPress = () => {
-    Linking.openURL('mailto:mrshaikot01@gmail.com')
+    Linking.openURL('mailto:example@gamil.com')
       .catch(() => Alert.alert('Error', 'Cannot open email app'));
   };
 
   const handlePhonePress = () => {
-    Linking.openURL('tel:+8801234567890')
+    Linking.openURL('tel:+1234-56789')
       .catch(() => Alert.alert('Error', 'Cannot make a call'));
   };
 
   const handleWhatsAppPress = () => {
-    Linking.openURL('https://wa.me/8801234567890')
+    Linking.openURL('https://wa.me/1234-56789')
       .catch(() => Alert.alert('Error', 'Cannot open WhatsApp'));
   };
 
@@ -99,7 +99,7 @@ export default function Contact() {
                 tw`text-lg font-semibold`,
                 isDarkMode ? tw`text-white` : tw`text-gray-800`
               ]}>
-                mrshaikot01@gmail.com
+                example@gamil.com
               </Text>
             </View>
             <Ionicons name="open-outline" size={20} color={isDarkMode ? "#9ca3af" : "#6b7280"} />
@@ -213,7 +213,7 @@ export default function Contact() {
 //           <View className="mb-4">
 //             <Text className="text-gray-400 text-sm">Email</Text>
 //             <Text className="text-lg font-semibold text-gray-800 dark:text-white">
-//               mrshaikot01@gmail.com
+//               example@gamil.com
 //             </Text>
 //           </View>
 

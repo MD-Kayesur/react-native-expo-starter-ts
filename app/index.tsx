@@ -72,7 +72,7 @@ export default function LandingPage() {
           </Text>
           
           <Text style={tw`text-2xl md:text-3xl font-bold text-red-600 text-center mb-6`}>
-            MD_Kayesur
+          
           </Text>
 
           {/* Description */}
