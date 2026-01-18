@@ -28,8 +28,7 @@ export default function Layout() {
             return <ExpandableTabButton size={size} focused={focused} />;
           }
 
-          let iconName: keyof typeof Ionicons.glyphMap = "home";
-          if (route.name === "index") iconName = "home";
+          let iconName: keyof typeof Ionicons.glyphMap = "call";
           if (route.name === "contact") iconName = "call";
 
           if (focused) {
@@ -85,19 +84,6 @@ export default function Layout() {
         },
       })}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarBackground: () => (
-            <BlurView
-              intensity={100}
-              tint="dark"
-              className="absolute inset-0 bg-black/70"
-            />
-          ),
-        }}
-      />
       <Tabs.Screen
         name="about"
         options={{
