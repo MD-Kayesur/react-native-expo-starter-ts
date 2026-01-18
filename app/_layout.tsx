@@ -8,7 +8,7 @@ import { tokenCache } from '@clerk/clerk-expo/token-cache';
 
 // Only import CSS on web - NativeWind handles mobile automatically via Metro
 if (Platform.OS === 'web') {
-  require('../global.css');
+  require('./global.css');
 }
 
 // Get publishable key from environment
@@ -73,7 +73,7 @@ export default function RootLayout() {
             }} 
           />
           <Stack.Screen 
-            name="(app)" 
+            name="(tabs)" 
             options={{ 
               headerShown: false,
             }} 
@@ -96,7 +96,8 @@ export default function RootLayout() {
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(app)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="workout" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
       </Provider>

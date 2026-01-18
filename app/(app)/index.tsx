@@ -1,12 +1,14 @@
 import { SignedIn, SignedOut, useUser } from '@clerk/clerk-expo'
-import { Link } from 'expo-router'
-import { Text, View, ScrollView, Button } from 'react-native'
+import { Link, useRouter } from 'expo-router'
+import { Text, View, ScrollView } from 'react-native'
 import { SignOutButton } from '../components/SignOutButton'
 import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
   
 
 export default function Page() {
   const { user } = useUser()
+  const router = useRouter()
 
   return (
     <ScrollView className="flex-1 p-5 bg-gray-50">
@@ -38,12 +40,18 @@ export default function Page() {
           </Text>
         </Card>
 
-        <View className="mt-4">
+        <Card className="mb-4">
+          <Text className="text-base font-semibold mb-2">📱 Navigation:</Text>
+          <Text className="text-sm text-gray-700 mb-1">
+            Use the bottom tabs to navigate between Home, Workouts, and Profile
+          </Text>
+        </Card>
+
+        <View className="mt-4 gap-3">
           <Link href="/create" asChild>
-            <Button title="Create Something" />
-          </Link>
-          <Link href="/profile" asChild>
-            <Button title="View Profile" />
+            <View>
+              <Button title="Create Something" onPress={() => {}} />
+            </View>
           </Link>
         </View>
         
@@ -58,10 +66,14 @@ export default function Page() {
         </View>
         <View className="mt-4 gap-3">
           <Link href="/(auth)/sign-in" asChild>
-            <Button title="Sign In" />
+            <View>
+              <Button title="Sign In" onPress={() => {}} />
+            </View>
           </Link>
           <Link href="/(auth)/sign-up" asChild>
-            <Button title="Sign Up" />
+            <View>
+              <Button title="Sign Up" onPress={() => {}} />
+            </View>
           </Link>
         </View>
       </SignedOut>
