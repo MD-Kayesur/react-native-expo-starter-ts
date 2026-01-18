@@ -1,117 +1,128 @@
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import { Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
+import React, { useState } from 'react'
+import tw from 'twrnc'
+import { Ionicons } from '@expo/vector-icons'
 
-export default function Page() {
+export default function SignInPage() {
   const { signIn, setActive, isLoaded } = useSignIn()
   const router = useRouter()
 
-  const [emailAddress, setEmailAddress] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const [error, setError] = React.useState('')
-  const [loading, setLoading] = React.useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  // Handle the submission of the sign-in form
   const onSignInPress = async () => {
-    if (!isLoaded) return
+    if (!isLoaded || !email || !password) {
+      Alert.alert('Error', 'Please fill all fields')
+      return
+    }
     
-    setError('')
     setLoading(true)
 
-    // Start the sign-in process using the email and password provided
     try {
-      const signInAttempt = await signIn.create({
-        identifier: emailAddress,
+      const result = await signIn.create({
+        identifier: email,
         password,
       })
 
-      // If sign-in process is complete, set the created session as active
-      // and redirect the user
-      if (signInAttempt.status === 'complete') {
-        await setActive({ session: signInAttempt.createdSessionId })
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId })
         router.replace('/')
       } else {
-        // If the status isn't complete, check why. User might need to
-        // complete further steps.
-        setError('Sign in incomplete. Please try again.')
-        console.error(JSON.stringify(signInAttempt, null, 2))
+        Alert.alert('Error', 'Sign in incomplete. Try again.')
       }
     } catch (err: any) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
-      let errorMessage = 'An error occurred during sign in'
-      
-      if (err?.errors?.[0]?.message) {
-        errorMessage = err.errors[0].message
-      } else if (err?.message) {
-        errorMessage = err.message
-      } else if (err?.status === 401 || err?.statusCode === 401) {
-        errorMessage = 'Invalid email or password. Please check your credentials.'
-      } else if (err?.status === 403 || err?.statusCode === 403) {
-        errorMessage = 'Access denied. Please check your Clerk configuration.'
-      } else if (err?.status === 0 || err?.code === 'NETWORK_ERROR') {
-        errorMessage = 'Network error. Please check your internet connection.'
-      }
-      
-      setError(errorMessage)
-      console.error('Sign in error:', JSON.stringify(err, null, 2))
+      Alert.alert(
+        'Sign In Failed', 
+        err?.errors?.[0]?.message || 'Invalid email or password'
+      )
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <View className="flex-1 p-5 justify-center bg-white">
-      <Text className="text-2xl font-bold mb-5">Sign in</Text>
+    <View style={tw`flex-1 bg-white p-6 justify-center`}>
       
-      {error ? (
-        <View className="bg-red-100 border-2 border-red-500 rounded-lg p-4 mb-4 shadow-lg">
-          <Text className="text-red-800 font-bold text-base mb-2">⚠️ Error</Text>
-          <Text className="text-red-700 text-sm leading-5" numberOfLines={5}>
-            {error}
-          </Text>
+      {/* Header */}
+      <View style={tw`items-center mb-10`}>
+        <View style={tw`w-20 h-20 bg-blue-100 rounded-full items-center justify-center mb-4`}>
+          <Ionicons name="lock-closed" size={40} color="#3b82f6" />
         </View>
-      ) : null}
-      
-      <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4"
-        autoCapitalize="none"
-        value={emailAddress}
-        placeholder="Enter email"
-        onChangeText={(emailAddress) => {
-          setEmailAddress(emailAddress)
-          setError('')
-        }}
-        editable={!loading}
-      />
-      <TextInput
-        className="border border-gray-300 rounded-lg p-3 mb-4"
-        value={password}
-        placeholder="Enter password"
-        secureTextEntry={true}
-        onChangeText={(password) => {
-          setPassword(password)
-          setError('')
-        }}
-        editable={!loading}
-      />
+        <Text style={tw`text-3xl font-bold text-gray-800`}>Welcome Back</Text>
+        <Text style={tw`text-gray-500 mt-2`}>Sign in to your account</Text>
+      </View>
+
+      {/* Email Input */}
+      <View style={tw`mb-5`}>
+        <Text style={tw`text-gray-700 mb-2 font-medium`}>Email</Text>
+        <TextInput
+          style={tw`border border-gray-300 rounded-xl p-4 text-lg bg-white`}
+          placeholder="your@email.com"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          editable={!loading}
+        />
+      </View>
+
+      {/* Password Input */}
+      <View style={tw`mb-6`}>
+        <Text style={tw`text-gray-700 mb-2 font-medium`}>Password</Text>
+        <TextInput
+          style={tw`border border-gray-300 rounded-xl p-4 text-lg bg-white`}
+          placeholder="••••••••"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          editable={!loading}
+        />
+      </View>
+
+      {/* Sign In Button */}
       <TouchableOpacity
-        className={`rounded-lg p-3 items-center mb-4 ${loading ? 'bg-gray-400' : 'bg-blue-500'}`}
         onPress={onSignInPress}
-        disabled={loading || !isLoaded}
+        disabled={loading || !email || !password}
+        style={[
+          tw`bg-blue-600 rounded-xl p-4 items-center justify-center mb-5`,
+          (loading || !email || !password) && tw`opacity-50`
+        ]}
       >
-        <Text className="text-white font-semibold">
-          {loading ? 'Signing in...' : 'Continue'}
+        <Text style={tw`text-white text-lg font-bold`}>
+          {loading ? 'Signing In...' : 'Sign In'}
         </Text>
       </TouchableOpacity>
-      <View className="flex-row gap-1 items-center justify-center">
-        <Text>Don't have an account?</Text>
-        <Link href="/(auth)/sign-up">
-          <Text className="text-blue-500 font-semibold">Sign up</Text>
+
+      {/* Forgot Password */}
+      <TouchableOpacity style={tw`items-center mb-8`}>
+        <Text style={tw`text-blue-600 font-medium`}>Forgot Password?</Text>
+      </TouchableOpacity>
+
+      {/* Sign Up Link */}
+      <View style={tw`flex-row items-center justify-center border-t border-gray-200 pt-6`}>
+        <Text style={tw`text-gray-600`}>Don't have an account? </Text>
+        <Link href="/(auth)/sign-up" asChild>
+          <TouchableOpacity>
+            <Text style={tw`text-blue-600 font-bold`}>Sign Up</Text>
+          </TouchableOpacity>
         </Link>
+      </View>
+
+      {/* Quick Sign In Tips */}
+      <View style={tw`mt-10 p-4 bg-gray-50 rounded-xl`}>
+        <Text style={tw`text-gray-500 text-sm text-center`}>
+          💡 Use the email you signed up with
+        </Text>
       </View>
     </View>
   )
 }
 
+
+
+
+
+ 
