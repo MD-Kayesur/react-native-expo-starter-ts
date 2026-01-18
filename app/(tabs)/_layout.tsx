@@ -3,6 +3,8 @@ import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { Tabs, Redirect } from "expo-router";
 import { useAuth } from "@clerk/clerk-expo";
+import ExpandableTabButton from "@/components/ExpandableTabButton";
+import { View } from "react-native";
 
 export default function Layout() {
   const { isSignedIn, isLoaded } = useAuth();
@@ -21,23 +23,40 @@ export default function Layout() {
         headerShown: false,
 
         // Tab icon with custom active color
-        tabBarIcon: ({ color, size, focused }) => {
+        tabBarIcon: ({ color, size, focused, route }) => {
+          if (route.name === "about") {
+            return <ExpandableTabButton size={size} focused={focused} />;
+          }
+
           let iconName: keyof typeof Ionicons.glyphMap = "home";
           if (route.name === "index") iconName = "home";
-          if (route.name === "about") iconName = "information-circle";
           if (route.name === "contact") iconName = "call";
 
           if (focused) {
-            // Active: red gradient
+            // Active: red gradient with white outline
             return (
-              <LinearGradient
-                colors={["#FF4D4D", "#FF0000"]}
-                start={[0, 0]}
-                end={[1, 1]}
-                style={{ borderRadius: 50 }}
+              <View
+                style={{
+                  borderRadius: 50,
+                  padding: 2,
+                  backgroundColor: "white",
+                }}
               >
-                <Ionicons name={iconName} size={size} color="white" />
-              </LinearGradient>
+                <LinearGradient
+                  colors={["#FF4D4D", "#FF0000"]}
+                  start={[0, 0]}
+                  end={[1, 1]}
+                  style={{
+                    borderRadius: 50,
+                    width: size + 4,
+                    height: size + 4,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Ionicons name={iconName} size={size} color="white" />
+                </LinearGradient>
+              </View>
             );
           }
 

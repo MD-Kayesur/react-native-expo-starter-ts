@@ -1,345 +1,155 @@
-import { View, Text, ScrollView, Platform, useWindowDimensions, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-import { SignedIn, SignedOut } from '@clerk/clerk-expo';
-import { Button } from '@/components/ui/Button';
-import SafeScreen from '@/components/SafeScreen';
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter, usePathname } from "expo-router";
+import { useAuth } from "@clerk/clerk-expo";
+import { useState } from "react";
 
 export default function LandingPage() {
+  const { height } = useWindowDimensions();
+  const centerY = height * 0.4;
   const router = useRouter();
-  const { width } = useWindowDimensions();
-  const isWeb = Platform.OS === 'web';
-  const isTablet = width > 768;
-  const maxContentWidth = isWeb ? 800 : '100%';
+  const { isSignedIn } = useAuth();
+  const pathname = usePathname();
+  const [activeIcon, setActiveIcon] = useState<string | null>(null);
+
+  const handleGetStarted = () => {
+    if (isSignedIn) {
+      router.push("/(tabs)");
+    } else {
+      router.push("/(auth)/sign-in");
+    }
+  };
+
+  const pageIcons = [
+    { icon: "home" as keyof typeof Ionicons.glyphMap, route: "/(tabs)", label: "Home", path: "/(tabs)" },
+    { icon: "information-circle" as keyof typeof Ionicons.glyphMap, route: "/(tabs)/about", label: "About", path: "/about" },
+    { icon: "call" as keyof typeof Ionicons.glyphMap, route: "/(tabs)/contact", label: "Contact", path: "/contact" },
+    { icon: "logo-whatsapp" as keyof typeof Ionicons.glyphMap, route: "/whatsapp", label: "WhatsApp", path: "/whatsapp" },
+    { icon: "cube" as keyof typeof Ionicons.glyphMap, route: "/cube", label: "Cube", path: "/cube" },
+    { icon: "paper-plane" as keyof typeof Ionicons.glyphMap, route: "/paper-plane", label: "Paper", path: "/paper-plane" },
+    { icon: "feather" as keyof typeof Ionicons.glyphMap, route: "/feather", label: "Feather", path: "/feather" },
+    { icon: "shield-checkmark" as keyof typeof Ionicons.glyphMap, route: "/shield", label: "Shield", path: "/shield" },
+  ];
+
+  const handleIconPress = (route: string, label: string) => {
+    setActiveIcon(label);
+    router.push(route as any);
+  };
+
+  const isActive = (page: typeof pageIcons[0]) => {
+    if (activeIcon) {
+      return activeIcon === page.label;
+    }
+    // Check if current pathname matches
+    return pathname.includes(page.path) || (page.path === "/(tabs)" && pathname === "/");
+  };
 
   return (
-    <SafeScreen>
-      <ScrollView 
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView className="flex-1 bg-white">
+      <View className="flex-1 items-center justify-center px-6 pb-24">
+        {/* Floating Icons on Right */}
+        <View
+          style={{
+            position: "absolute",
+            right: 16,
+            top: centerY,
+            gap: 16,
+          }}
+        >
+          <Pressable
+            className="rounded-full items-center justify-center"
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: "rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Ionicons name="grid" size={24} color="black" />
+          </Pressable>
+          <Pressable
+            className="rounded-full items-center justify-center"
+            style={{
+              width: 48,
+              height: 48,
+              backgroundColor: "#9333EA",
+            }}
+          >
+            <Text className="text-white font-bold text-lg">K</Text>
+          </Pressable>
+        </View>
+
+        {/* Main Content */}
+        <View className="items-center">
+          <Text className="text-5xl font-bold text-black mb-4">Welcome</Text>
+
+          {/* Paragraph */}
+          <Text className="text-center text-gray-700 text-base mb-8 leading-6 max-w-xs">
+            Start your fitness journey with us. Train hard, stay consistent, and
+            achieve your goals step by step.
+          </Text>
+
+          {/* Button */}
+          <Pressable 
+            onPress={handleGetStarted}
+            className="bg-red-600 px-8 py-4 rounded-full"
+          >
+            <Text className="text-white font-bold text-lg">GET STARTED</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      {/* Bottom Navigation Icons */}
+      <View
+        className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200"
+        style={{
+          paddingBottom: 20,
+          paddingTop: 12,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 5,
+        }}
       >
-        <View style={styles.headerContainer}>
-          {/* Header Section */}
-          <View style={[styles.headerSection, isWeb && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
-            <View style={styles.iconContainer}>
-              <Text style={styles.iconText}>🚀</Text>
-            </View>
-            
-            <Text style={[styles.mainTitle, isTablet && styles.mainTitleTablet]}>
-              Welcome to React Native
-            </Text>
-            <Text style={[styles.mainTitle, isTablet && styles.mainTitleTablet, styles.titleSpacing]}>
-              Expo Starter Template
-            </Text>
-            
-            <View style={styles.badgeContainer}>
-              <Text style={styles.badgeText}>
-                ⚡ Powered by TypeScript
-              </Text>
-            </View>
-            
-           
-          </View>
-
-          {/* Features Section */}
-          <View style={[styles.featuresContainer, isWeb && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
-            <Text style={[styles.sectionTitle, isTablet && styles.sectionTitleTablet]}>
-              Everything You Need to Start Building
-            </Text>
-
-            <View style={[styles.featuresGrid, isWeb && isTablet && styles.featuresGridTablet]}>
-              {/* Feature 1 */}
-              <View style={[styles.featureCard, styles.featureCardBlue, isWeb && isTablet && styles.featureCardHalf]}>
-                <View style={styles.featureHeader}>
-                  <Text style={styles.featureIcon}>⚛️</Text>
-                  <Text style={styles.featureTitle}>
-                    React Native & Expo
-                  </Text>
-                </View>
-                <Text style={styles.featureDescription}>
-                  Latest Expo SDK 54 with React Native 0.81.5
-                </Text>
-              </View>
-
-              {/* Feature 2 */}
-              <View style={[styles.featureCard, styles.featureCardPurple, isWeb && isTablet && styles.featureCardHalf]}>
-                <View style={styles.featureHeader}>
-                  <Text style={styles.featureIcon}>📘</Text>
-                  <Text style={styles.featureTitle}>
-                    TypeScript Ready
-                  </Text>
-                </View>
-                <Text style={styles.featureDescription}>
-                  Full TypeScript support with type safety
-                </Text>
-              </View>
-
-              {/* Feature 3 */}
-              <View style={[styles.featureCard, styles.featureCardGreen, isWeb && isTablet && styles.featureCardHalf]}>
-                <View style={styles.featureHeader}>
-                  <Text style={styles.featureIcon}>🎨</Text>
-                  <Text style={styles.featureTitle}>
-                    NativeWind (Tailwind CSS)
-                  </Text>
-                </View>
-                <Text style={styles.featureDescription}>
-                  Beautiful UI with utility-first CSS
-                </Text>
-              </View>
-
-              {/* Feature 4 */}
-              <View style={[styles.featureCard, styles.featureCardOrange, isWeb && isTablet && styles.featureCardHalf]}>
-                <View style={styles.featureHeader}>
-                  <Text style={styles.featureIcon}>🔐</Text>
-                  <Text style={styles.featureTitle}>
-                    Clerk Authentication
-                  </Text>
-                </View>
-                <Text style={styles.featureDescription}>
-                  Secure authentication out of the box
-                </Text>
-              </View>
-
-              {/* Feature 5 */}
-              <View style={[styles.featureCard, styles.featureCardPink, isWeb && isTablet && styles.featureCardHalf]}>
-                <View style={styles.featureHeader}>
-                  <Text style={styles.featureIcon}>🗂️</Text>
-                  <Text style={styles.featureTitle}>
-                    Expo Router
-                  </Text>
-                </View>
-                <Text style={styles.featureDescription}>
-                  File-based routing for easy navigation
-                </Text>
-              </View>
-
-              {/* Feature 6 */}
-              <View style={[styles.featureCard, styles.featureCardIndigo, isWeb && isTablet && styles.featureCardHalf]}>
-                <View style={styles.featureHeader}>
-                  <Text style={styles.featureIcon}>📦</Text>
-                  <Text style={styles.featureTitle}>
-                    Redux Toolkit
-                  </Text>
-                </View>
-                <Text style={styles.featureDescription}>
-                  State management configured and ready
-                </Text>
-              </View>
-            </View>
-
-            {/* CTA Buttons */}
-            <SignedOut>
-              <View style={[styles.buttonContainer, isWeb && isTablet && styles.buttonContainerTablet, isWeb && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
-                <View style={[styles.buttonWrapper, isWeb && isTablet && styles.buttonWrapperHalf]}>
-                  <Button 
-                    title="Get Started - Sign Up" 
-                    onPress={() => router.push('/(auth)/sign-up')}
-                    variant="primary"
-                  />
-                </View>
-                
-                <View style={[styles.buttonWrapper, isWeb && isTablet && styles.buttonWrapperHalf]}>
-                  <Button 
-                    title="Sign In" 
-                    onPress={() => router.push('/(auth)/sign-in')}
-                    variant="secondary"
-                  />
-                </View>
-              </View>
-            </SignedOut>
-
-            <SignedIn>
-              <View style={[styles.singleButtonContainer, isWeb && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
-                <Button 
-                  title="Continue to App →" 
-                  onPress={() => router.push('/(app)')}
-                  variant="primary"
+        <View className="flex-row justify-around items-center px-4">
+          {pageIcons.map((page, index) => (
+            <Pressable
+              key={index}
+              onPress={() => handleIconPress(page.route, page.label)}
+              className="items-center justify-center"
+              style={{
+                width: 50,
+                height: 50,
+              }}
+            >
+              <View
+                className="rounded-full items-center justify-center"
+                style={{
+                  width: 40,
+                  height: 40,
+                  backgroundColor: isActive(page) ? "#FF0000" : "transparent",
+                }}
+              >
+                <Ionicons
+                  name={page.icon}
+                  size={24}
+                  color={isActive(page) ? "white" : "#666"}
                 />
               </View>
-            </SignedIn>
-           
-
-            {/* Footer */}
-            <View style={[styles.footer, isWeb && { maxWidth: maxContentWidth, alignSelf: 'center', width: '100%' }]}>
-              <Text style={styles.footerText}>
-                Built with ❤️ using React Native Expo & TypeScript
+              <Text
+                className="text-xs mt-1"
+                style={{
+                  color: isActive(page) ? "#FF0000" : "#666",
+                  fontWeight: isActive(page) ? "bold" : "normal",
+                }}
+              >
+                {page.label}
               </Text>
-              <Text style={styles.footerSubtext}>
-                Ready to build amazing mobile apps
-              </Text>
-              <Text style={styles.footerSubtext}>
-               created by: MD_Kayesur
-              </Text>
-            </View>
-          </View>
+            </Pressable>
+          ))}
         </View>
-      </ScrollView>
-    </SafeScreen>
+      </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-  },
-  headerContainer: {
-    flex: 1,
-    backgroundColor: '#3B82F6', // blue-500
-  },
-  headerSection: {
-    paddingTop: Platform.OS === 'web' ? 80 : 64,
-    paddingBottom: 32,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  iconContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 9999,
-    padding: 16,
-    marginBottom: 24,
-  },
-  iconText: {
-    fontSize: 48,
-  },
-  mainTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 12,
-  },
-  mainTitleTablet: {
-    fontSize: 48,
-  },
-  titleSpacing: {
-    marginBottom: 16,
-  },
-  badgeContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 9999,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    marginBottom: 16,
-  },
-  badgeText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  featuresContainer: {
-    paddingHorizontal: 24,
-    paddingVertical: 24,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  sectionTitleTablet: {
-    fontSize: 32,
-  },
-  featuresGrid: {
-    gap: 16,
-    marginBottom: 32,
-  },
-  featuresGridTablet: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  featureCard: {
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    marginBottom: 16,
-    width: '100%',
-  },
-  featureCardHalf: {
-    width: '48%',
-    marginHorizontal: '1%',
-  },
-  featureCardBlue: {
-    backgroundColor: '#EFF6FF',
-    borderColor: '#DBEAFE',
-  },
-  featureCardPurple: {
-    backgroundColor: '#F5F3FF',
-    borderColor: '#E9D5FF',
-  },
-  featureCardGreen: {
-    backgroundColor: '#F0FDF4',
-    borderColor: '#D1FAE5',
-  },
-  featureCardOrange: {
-    backgroundColor: '#FFF7ED',
-    borderColor: '#FED7AA',
-  },
-  featureCardPink: {
-    backgroundColor: '#FDF2F8',
-    borderColor: '#FBCFE8',
-  },
-  featureCardIndigo: {
-    backgroundColor: '#EEF2FF',
-    borderColor: '#E0E7FF',
-  },
-  featureHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  featureIcon: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  featureTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
-  },
-  featureDescription: {
-    fontSize: 14,
-    color: '#4B5563',
-    marginLeft: 40,
-  },
-  buttonContainer: {
-    gap: 12,
-    marginBottom: 32,
-  },
-  buttonContainerTablet: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  buttonWrapper: {
-    width: '100%',
-  },
-  buttonWrapperHalf: {
-    width: '48%',
-  },
-  singleButtonContainer: {
-    marginBottom: 32,
-  },
-  footer: {
-    alignItems: 'center',
-    paddingBottom: 32,
-    paddingTop: 16,
-  },
-  footerText: {
-    color: '#9CA3AF',
-    fontSize: 14,
-    textAlign: 'center',
-  },
-  footerSubtext: {
-    color: '#9CA3AF',
-    fontSize: 12,
-    marginTop: 8,
-  },
-});
