@@ -23,7 +23,7 @@ export default function Layout() {
         headerShown: false,
 
         // Tab icon with custom active color
-        tabBarIcon: ({ color, size, focused, route }) => {
+        tabBarIcon: ({ color, size, focused }) => {
           if (route.name === "about") {
             return <ExpandableTabButton size={size} focused={focused} />;
           }

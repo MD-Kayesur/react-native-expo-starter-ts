@@ -1,4 +1,4 @@
-import { Pressable, Text, View, useWindowDimensions } from "react-native";
+import { Pressable, Text, View, useWindowDimensions, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, usePathname } from "expo-router";
@@ -103,8 +103,8 @@ export default function LandingPage() {
       <View
         className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200"
         style={{
-          paddingBottom: 20,
-          paddingTop: 12,
+          paddingBottom: 10,
+          paddingTop: 8,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
           shadowOpacity: 0.1,
@@ -112,43 +112,55 @@ export default function LandingPage() {
           elevation: 5,
         }}
       >
-        <View className="flex-row justify-around items-center px-4">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 8,
+            alignItems: "center",
+            gap: 4,
+          }}
+          style={{ flexGrow: 0 }}
+        >
           {pageIcons.map((page, index) => (
             <Pressable
               key={index}
               onPress={() => handleIconPress(page.route, page.label)}
               className="items-center justify-center"
               style={{
-                width: 50,
-                height: 50,
+                minWidth: 45,
+                width: 45,
+                paddingHorizontal: 4,
               }}
             >
               <View
                 className="rounded-full items-center justify-center"
                 style={{
-                  width: 40,
-                  height: 40,
+                  width: 36,
+                  height: 36,
                   backgroundColor: isActive(page) ? "#FF0000" : "transparent",
                 }}
               >
                 <Ionicons
                   name={page.icon}
-                  size={24}
+                  size={20}
                   color={isActive(page) ? "white" : "#666"}
                 />
               </View>
               <Text
                 className="text-xs mt-1"
+                numberOfLines={1}
                 style={{
                   color: isActive(page) ? "#FF0000" : "#666",
                   fontWeight: isActive(page) ? "bold" : "normal",
+                  fontSize: 10,
                 }}
               >
                 {page.label}
               </Text>
             </Pressable>
           ))}
-        </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
