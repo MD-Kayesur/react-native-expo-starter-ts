@@ -54,32 +54,41 @@ export default function RootLayout() {
     }
   }, []);
 
-  // If no publishable key, show error screen
+  // If no publishable key, still provide ClerkProvider with empty key
+  // This allows components to use useAuth() without crashing
+  // Components should handle the case when auth isn't available
   if (!publishableKey) {
     return (
-      <Provider store={store}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen 
-            name="(auth)/missing-key" 
-            options={{ 
-              headerShown: false,
-            }} 
-          />
-          <Stack.Screen 
-            name="(auth)" 
-            options={{ 
-              headerShown: false,
-            }} 
-          />
-          <Stack.Screen 
-            name="(tabs)" 
-            options={{ 
-              headerShown: false,
-            }} 
-          />
-        </Stack>
-      </Provider>
+      <ClerkProvider 
+        publishableKey="" 
+        tokenCache={tokenCache}
+      >
+        <Provider store={store}>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen 
+              name="(auth)/missing-key" 
+              options={{ 
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="(auth)" 
+              options={{ 
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen 
+              name="(tabs)" 
+              options={{ 
+                headerShown: false,
+              }} 
+            />
+            <Stack.Screen name="(pages)" options={{ headerShown: false }} />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </Provider>
+      </ClerkProvider>
     );
   }
 
