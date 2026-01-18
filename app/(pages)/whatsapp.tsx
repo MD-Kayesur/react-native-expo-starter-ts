@@ -123,7 +123,7 @@ export default function whatsapp() {
                 tw`text-lg font-semibold`,
                 isDarkMode ? tw`text-white` : tw`text-gray-800`
               ]}>
-                +880 1234-567890
+                +880 1234-56789
               </Text>
             </View>
             <Ionicons name="open-outline" size={20} color={isDarkMode ? "#9ca3af" : "#6b7280"} />
