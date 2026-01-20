@@ -39,9 +39,17 @@ cd react-native-expo-starter
 
 ```bash
 npm install --legacy-peer-deps
+npm install react-native-worklets-core
 ```
 
+ 
+
 **Note:** The `--legacy-peer-deps` flag is required due to React 19 peer dependency conflicts with some packages. This is safe and recommended for this project.
+
+
+**Note:** The `react-native-worklets-core` flag is required Android Bundling failed 442ms node_modules\expo-router\entry.js (1 module)
+ ERROR  Error: [BABEL] C:\MD_Kayesur\app project\My_App\node_modules\expo-router\entry.js: Cannot find module 'react-native-worklets/plugin'
+ 
 
 ### 3. Environment Variables Setup
 
